@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sorpresa de Flores</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #ffe066; /* amarillo más fuerte */
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* ---------- SOBRE ---------- */
+  .envelope {
+    width: 280px;
+    height: 180px;
+    background: white;
+    position: relative;
+    cursor: pointer;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    animation: grow 2s forwards;
+    z-index: 10;
+  }
+  @keyframes grow {
+    0% { transform: scale(0.1); opacity: 0; }
+    100% { transform: scale(1.5); opacity: 1; }
+  }
+  .flap {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 50%;
+    background: white;
+    border-bottom: 2px solid #ccc;
+    transform-origin: top;
+    transition: transform 1s ease-in-out;
+    border-radius: 5px 5px 0 0;
+    z-index: 11;
+  }
+  .heart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 50px;
+    color: red;
+    z-index: 12;
+  }
+
+  /* ---------- NOTA ---------- */
+  .note {
+    position: absolute;
+    top: 70%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 400px;
+    height: 300px;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 22px;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    line-height: 1.5;
+    padding: 20px;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+    background-image: repeating-linear-gradient(white, white 28px, #e6e6e6 29px);
+    display: none;
+    z-index: 9;
+  }
+  .note.show {
+    display: block;
+    animation: rise 2s ease-out forwards;
+  }
+  @keyframes rise {
+    0% { top: 70%; opacity: 0; }
+    100% { top: 50%; opacity: 1; }
+  }
+
+  /* ---------- FLORES ---------- */
+  .flower {
+    position: absolute;
+    pointer-events: none;
+    animation: fall linear forwards;
+    z-index: 5;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-150px) translateX(0px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) translateX(50px) rotate(720deg); opacity: 0.8; }
+  }
+
+  /* ---------- FINAL ---------- */
+  .final {
+    display: none;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 20;
+  }
+  .final img {
+    width: 350px;
+    height: 350px;
+    object-fit: contain;
+    background: transparent;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .final p {
+    font-size: 48px;
+    font-family: "Times New Roman", serif;
+    color: black;
+    margin: 10px 0;
+  }
+  .final .heart-big {
+    font-size: 80px;
+    color: red;
+  }
+</style>
+</head>
+<body>
+
+<div class="envelope" id="envelope" onclick="openEnvelope()">
+  <div class="flap" id="flap"></div>
+  <div class="heart">❤</div>
+</div>
+
+<div class="note" id="note">Con mucho cariño <br><br>Para mi pulguis hermosa 🌻</div>
+
+<div class="final" id="final">
+  <img src="Pulga.png" alt="Personaje sin fondo">
+  <p>UN RAMO PARA TI</p>
+  <div class="heart-big">❤</div>
+</div>
+
+<script>
+let flowers = []; // almacenar todas las flores
+
+function openEnvelope() {
+  // abrir tapa
+  document.getElementById('flap').style.transform = "rotateX(180deg)";
+
+  setTimeout(() => {
+    // mostrar nota
+    document.getElementById('note').classList.add("show");
+    document.getElementById('envelope').style.display = "none";
+
+    // ---------- FLORES AMARILLAS DESDE EL PRINCIPIO ----------
+    const flowerImages = ["flor1.png","flor2.png","flor.png"]; // agrega aquí tus imágenes
+    for(let i=0; i<500; i++){
+      let f = document.createElement('img');
+      f.src = flowerImages[Math.floor(Math.random()*flowerImages.length)];
+      f.classList.add('flower');
+      f.style.left = Math.random()*window.innerWidth + "px";
+      f.style.top = "-100px";
+      f.style.width = (50 + Math.random()*80) + "px";
+      f.style.animationDuration = (50 + Math.random()*30) + "s"; // cascada larga
+      f.style.animationDelay = Math.random()*5 + "s";
+      document.body.appendChild(f);
+      flowers.push(f);
+    }
+
+  }, 800);
+
+  // ---------- FINAL RAMO ----------
+  setTimeout(() => {
+    document.getElementById('note').style.display = "none";
+    document.getElementById('final').style.display = "block";
+
+    // Pausar flores en el fondo
+    flowers.forEach(f=>{
+      let computed = window.getComputedStyle(f);
+      let transform = computed.transform;
+      f.style.transform = transform; // mantener posición actual
+      f.style.animation = "none"; // detener animación
+    });
+
+  }, 20000); // duración total de la cascada
+}
+</script>
+
+</body>
+</html>
